@@ -27,7 +27,7 @@ android:
         - sys-img-armeabi-v7a-google_apis-$EMULATOR_API_LEVEL
 
 script:
-   - ./gradlew assemble
+   - ./gradlew assemble --stacktrace
 
 after_script:
     # Start Emulator
