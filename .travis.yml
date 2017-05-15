@@ -32,6 +32,10 @@ licenses:
     - 'android-sdk-license-.+'
     - 'google-gdk-license-.+'
 
+before_script:
+    - mkdir -p "$ANDROID_HOME/licenses"
+    - cp ./licenses/* "$ANDROID_HOME/licenses/"
+
 script:
    - ./gradlew assemble --stacktrace
 
