@@ -57,7 +57,7 @@ public class TabsDisplayedTest extends InstrumentationTestCase {
 
         onView(withText("City")).perform(click());
         onView(withId(R.id.fragment)).check(matches(withText("city_fragment")));
-        
+
     }
 
 
