@@ -6,4 +6,5 @@
     <string name="search_btn">Search</string>
     <string name="hint_city">Please enter city name</string>
     <string name="hint_book">Please insert book title</string>
+    <string name="hint_author">Please enter author name</string>
 </resources>

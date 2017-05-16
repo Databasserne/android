@@ -25,7 +25,7 @@
 
     <com.google.android.gms.maps.MapView
         android:layout_weight="100"
-        android:id="@+id/mapView"
+        android:id="@+id/bookMap"
         android:layout_width="match_parent"
         android:layout_height="0dp" />
 

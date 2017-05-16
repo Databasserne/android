@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -22,6 +23,7 @@ public class PageFragment extends Fragment implements OnMapReadyCallback {
     private View view;
     private MapView mapView;
     private GoogleMap map;
+    private ListView authorRes;
 
     public static PageFragment newInstance(int page) {
         Bundle args = new Bundle();
@@ -68,13 +70,18 @@ public class PageFragment extends Fragment implements OnMapReadyCallback {
 
     private void setupBookView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.book_fragment, container, false);
-        mapView = (MapView) view.findViewById(R.id.mapView);
+        mapView = (MapView) view.findViewById(R.id.bookMap);
         mapView.getMapAsync(this);
         mapView.onCreate(savedInstanceState);
     }
 
     private void setupAuthorView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.author_fragment, container, false);
+        mapView = (MapView) view.findViewById(R.id.authorMap);
+        mapView.getMapAsync(this);
+        mapView.onCreate(savedInstanceState);
+        authorRes = (ListView) view.findViewById(R.id.authorResults);
+        // TODO - Add dummy data to make sure it works with list of book titles aswell as city markers
     }
 
     private void setupLocationView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
