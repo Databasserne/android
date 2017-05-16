@@ -3,4 +3,7 @@
     <string name="title_activity_searches">SearchesActivity</string>
     <string name="action_settings">Settings</string>
     <string name="section_format">Hello World from section: %1$d</string>
+    <string name="search_btn">Search</string>
+    <string name="hint_city">Please enter city name</string>
+    <string name="hint_book">Please insert book title</string>
 </resources>

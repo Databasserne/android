@@ -6,16 +6,22 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.OnMapReadyCallback;
+
 /**
  * Created by kasper on 5/10/17.
  */
 
-public class PageFragment extends Fragment {
+public class PageFragment extends Fragment implements OnMapReadyCallback {
 
     public static final String ARG_PAGE = "ARG_PAGE";
 
     private int mPage;
     private View view;
+    private MapView mapView;
+    private GoogleMap map;
 
     public static PageFragment newInstance(int page) {
         Bundle args = new Bundle();
@@ -36,27 +42,47 @@ public class PageFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         switch (mPage) {
-//            case 1: {
-//                view = inflater.inflate(R.layout.city_fragment, container, false);
-//                break;
-//            }
+            default: {
+                setupCityView(inflater, container, savedInstanceState);
+                break;
+            }
             case 2: {
-                view = inflater.inflate(R.layout.book_fragment, container, false);
+                setupBookView(inflater, container, savedInstanceState);
                 break;
             }
             case 3: {
-                view = inflater.inflate(R.layout.author_fragment, container, false);
+                setupAuthorView(inflater, container, savedInstanceState);
                 break;
             }
             case 4: {
-                view = inflater.inflate(R.layout.location_fragment, container, false);
-                break;
-            }
-            default: {
-                view = inflater.inflate(R.layout.city_fragment, container, false);
+                setupLocationView(inflater, container, savedInstanceState);
                 break;
             }
         }
         return view;
+    }
+
+    private void setupCityView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        view = inflater.inflate(R.layout.city_fragment, container, false);
+    }
+
+    private void setupBookView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        view = inflater.inflate(R.layout.book_fragment, container, false);
+        mapView = (MapView) view.findViewById(R.id.mapView);
+        mapView.getMapAsync(this);
+        mapView.onCreate(savedInstanceState);
+    }
+
+    private void setupAuthorView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        view = inflater.inflate(R.layout.author_fragment, container, false);
+    }
+
+    private void setupLocationView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        view = inflater.inflate(R.layout.location_fragment, container, false);
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mapView.onResume();
     }
 }
