@@ -24,12 +24,12 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
  */
 
 @RunWith(AndroidJUnit4.class)
-public class AuthorTest extends InstrumentationTestCase {
+public class LocationTest extends InstrumentationTestCase {
 
     @Rule
     public ActivityTestRule<MainActivity> mainActivity = new ActivityTestRule<>(MainActivity.class, true, false);
 
-    String author = "Shakespeare";
+    String location = "lat long";
 
     @Before
     public void setup() throws Exception {
@@ -45,19 +45,15 @@ public class AuthorTest extends InstrumentationTestCase {
                 .check(matches(isDisplayed()));
         onView(withId(R.id.viewpager))
                 .check(matches(isDisplayed()));
-        onView(withText("Author")).perform(click());
+        onView(withText("Location")).perform(click());
 
-        onView(withId(R.id.authorInsert))
-                .perform(typeText(author));
+        onView(withId(R.id.locationInsert))
+                .perform(typeText(location));
 
-        onView(withId(R.id.authorButton))
+        onView(withId(R.id.locationButton))
                 .perform(click());
 
-        //TODO - not yet displayed since no data in it
-//        onView(withId(R.id.authorResults))
-//                .check(matches(isDisplayed()));
-
-        onView(withId(R.id.authorMap))
+        onView(withId(R.id.locationResults))
                 .check(matches(isDisplayed()));
     }
 

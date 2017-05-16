@@ -7,4 +7,5 @@
     <string name="hint_city">Please enter city name</string>
     <string name="hint_book">Please insert book title</string>
     <string name="hint_author">Please enter author name</string>
+    <string name="hint_location">Please enter a location</string>
 </resources>

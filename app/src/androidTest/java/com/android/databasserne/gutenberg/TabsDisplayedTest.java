@@ -47,16 +47,16 @@ public class TabsDisplayedTest extends InstrumentationTestCase {
                 .check(matches(isDisplayed()));
 
         onView(withId(R.id.viewpager)).perform(swipeLeft());
-        onView(withId(R.id.fragment2)).check(matches(withText("book_fragment")));
+        onView(withId(R.id.fragment2)).check(matches(withText("book")));
 
         onView(withId(R.id.viewpager)).perform(swipeLeft());
-        onView(withId(R.id.fragment3)).check(matches(withText("author_fragment")));
+        onView(withId(R.id.fragment3)).check(matches(withText("author")));
 
         onView(withId(R.id.viewpager)).perform(swipeLeft());
-        onView(withId(R.id.fragment4)).check(matches(withText("location_fragment")));
+        onView(withId(R.id.fragment4)).check(matches(withText("location")));
 
         onView(withText("City")).perform(click());
-        onView(withId(R.id.fragment)).check(matches(withText("city_fragment")));
+        onView(withId(R.id.fragment)).check(matches(withText("city")));
 
     }
 
