@@ -2,8 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:weightSum="100"
-    android:orientation="vertical">
+    android:focusableInTouchMode="true"
+    android:orientation="vertical"
+    android:weightSum="100">
 
     <TextView
         android:id="@+id/fragment2"
@@ -15,7 +16,7 @@
         android:id="@+id/bookInsert"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:hint="@string/hint_book"/>
+        android:hint="@string/hint_book" />
 
     <Button
         android:id="@+id/bookButton"
@@ -24,10 +25,10 @@
         android:text="@string/search_btn" />
 
     <com.google.android.gms.maps.MapView
-        android:layout_weight="100"
         android:id="@+id/bookMap"
         android:layout_width="match_parent"
-        android:layout_height="0dp" />
+        android:layout_height="0dp"
+        android:layout_weight="100" />
 
 
 </LinearLayout>
