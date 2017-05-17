@@ -1,9 +1,11 @@
-package com.android.databasserne.gutenberg;
+package com.android.databasserne.gutenberg.Adapters;
 
 import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+
+import com.android.databasserne.gutenberg.PageFragment;
 
 /**
  * Created by kasper on 5/10/17.
@@ -32,7 +34,7 @@ public class TabFragmentAdapter extends FragmentPagerAdapter {
 
     @Override
     public CharSequence getPageTitle(int position) {
-        // Generate title based on item position
+        // Generate second based on item position
         return tabTitles[position];
     }
 }

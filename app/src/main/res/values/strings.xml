@@ -5,7 +5,9 @@
     <string name="section_format">Hello World from section: %1$d</string>
     <string name="search_btn">Search</string>
     <string name="hint_city">Please enter city name</string>
-    <string name="hint_book">Please insert book title</string>
-    <string name="hint_author">Please enter author name</string>
+    <string name="hint_book">Please insert book second</string>
+    <string name="hint_author">Please enter first name</string>
     <string name="hint_location">Please enter a location</string>
+    <string name="author_btn_list">View list</string>
+    <string name="author_btn_map">View map</string>
 </resources>

@@ -9,7 +9,7 @@
         android:id="@+id/fragment3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="author" />
+        android:text="first" />
 
     <EditText
         android:id="@+id/authorInsert"
@@ -27,7 +27,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="100">
+        android:layout_weight="90">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -50,6 +50,31 @@
         </LinearLayout>
 
 
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="10"
+        android:gravity="bottom"
+        android:orientation="horizontal"
+        android:weightSum="1">
+
+        <Button
+            android:id="@+id/authorBtnList"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:background="@android:color/transparent"
+            android:text="@string/author_btn_list" />
+
+        <Button
+            android:id="@+id/authorBtnMap"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:background="@android:color/transparent"
+            android:text="@string/author_btn_map" />
     </LinearLayout>
 
 </LinearLayout>
