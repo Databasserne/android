@@ -13,7 +13,6 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
@@ -33,8 +32,8 @@ public class PageFragment extends Fragment implements OnMapReadyCallback {
     private ListView resultsListView;
     private Button searchBtn;
     private MultilineArrayAdapter adapter;
-
     private ArrayList<SingleResult> dummyList;
+    boolean authorLastClicked = true;
 
     public static PageFragment newInstance(int page) {
         Bundle args = new Bundle();
@@ -82,7 +81,7 @@ public class PageFragment extends Fragment implements OnMapReadyCallback {
         searchBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                insertCityResults(resultsListView);
+                insertListResults(resultsListView);
             }
         });
     }
@@ -96,7 +95,7 @@ public class PageFragment extends Fragment implements OnMapReadyCallback {
         searchBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                insertBookResults();
+                insertMapResults();
             }
         });
     }
@@ -107,11 +106,51 @@ public class PageFragment extends Fragment implements OnMapReadyCallback {
         mapView.getMapAsync(this);
         mapView.onCreate(savedInstanceState);
         resultsListView = (ListView) view.findViewById(R.id.authorResults);
-        // TODO - Add dummy data to make sure it works with list of book titles aswell as city markers
+
+        Button listBtn = (Button) view.findViewById(R.id.authorBtnList);
+        listBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                authorLastClicked = true;
+                mapView.onPause();
+                mapView.setVisibility(View.GONE);
+                resultsListView.setVisibility(View.VISIBLE);
+            }
+        });
+
+        Button mapBtn = (Button) view.findViewById(R.id.authorBtnMap);
+        mapBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                authorLastClicked = false;
+                mapView.onResume();
+                resultsListView.setVisibility(View.GONE);
+                mapView.setVisibility(View.VISIBLE);
+
+            }
+        });
+
+        searchBtn = (Button) view.findViewById(R.id.authorButton);
+        searchBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                insertListResults(resultsListView);
+                insertMapResults();
+            }
+        });
+
     }
 
     private void setupLocationView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.location_fragment, container, false);
+        resultsListView = (ListView) view.findViewById(R.id.locationResults);
+        searchBtn = (Button) view.findViewById(R.id.locationButton);
+        searchBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                insertListResults(resultsListView);
+            }
+        });
     }
 
     @Override
@@ -120,14 +159,14 @@ public class PageFragment extends Fragment implements OnMapReadyCallback {
         mapView.onResume();
     }
 
-    private void insertCityResults(ListView view) {
-        dummyList = getCityTestData();
+    private void insertListResults(ListView view) {
+        dummyList = getListTestData();
         adapter = new MultilineArrayAdapter(this.getContext(), dummyList);
         view.setAdapter(adapter);
     }
 
-    private void insertBookResults() {
-        dummyList = getBookTestData();
+    private void insertMapResults() {
+        dummyList = getMapTestData();
         map.clear();
 
         LatLng latlong;
@@ -137,12 +176,10 @@ public class PageFragment extends Fragment implements OnMapReadyCallback {
 
             map.addMarker(new MarkerOptions().position(latlong));
         }
-
-
     }
 
     // TODO - Change to use JSON data from rest api
-    private ArrayList<SingleResult> getCityTestData() {
+    private ArrayList<SingleResult> getListTestData() {
         ArrayList<SingleResult> tempList = new ArrayList<SingleResult>();
 
         SingleResult sr = new SingleResult();
@@ -208,7 +245,7 @@ public class PageFragment extends Fragment implements OnMapReadyCallback {
         return tempList;
     }
 
-    private ArrayList<SingleResult> getBookTestData() {
+    private ArrayList<SingleResult> getMapTestData() {
         ArrayList<SingleResult> tempList = new ArrayList<SingleResult>();
 
         SingleResult sr = new SingleResult();
