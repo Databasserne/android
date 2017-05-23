@@ -11,4 +11,5 @@
     <string name="author_btn_list">View list</string>
     <string name="author_btn_map">View map</string>
     <string name="http_error">Request to server failed - Using server:</string>
+    <string name="menu_database">Database</string>
 </resources>

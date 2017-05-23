@@ -37,6 +37,7 @@ import java.util.Set;
 public class PageFragment extends Fragment implements OnMapReadyCallback {
 
     public static final String ARG_PAGE = "ARG_PAGE";
+    public static String server = "http://bdea7eae.ngrok.io/web/api/";
 
     private int mPage;
     private View view;
@@ -48,7 +49,6 @@ public class PageFragment extends Fragment implements OnMapReadyCallback {
     boolean authorLastClicked = true;
     private TextView test;
     private EditText input;
-    private String server = "http://bdea7eae.ngrok.io/web/api/";
 
     public static PageFragment newInstance(int page) {
         Bundle args = new Bundle();
@@ -112,7 +112,7 @@ public class PageFragment extends Fragment implements OnMapReadyCallback {
         searchBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getMapQueryData("book");
+                getBookQueryData("book");
             }
         });
         test = (TextView) view.findViewById(R.id.fragment2);
@@ -183,7 +183,7 @@ public class PageFragment extends Fragment implements OnMapReadyCallback {
 
     private void getCityQueryData(final ListView view, String query) {
         final ArrayList<SingleResult> tempList = new ArrayList<SingleResult>();
-        String db = "mysql" + "/";
+        String db = MainActivity.database + "/";
         String type = query + "/";
         String city = input.getText().toString();
         String url = server + db + type + city;
@@ -223,10 +223,10 @@ public class PageFragment extends Fragment implements OnMapReadyCallback {
         queue.add(stringRequest);
     }
 
-    private void getMapQueryData(String query) {
+    private void getBookQueryData(String query) {
         final ArrayList<SingleResult> tempList = new ArrayList<SingleResult>();
 
-        String db = "mysql" + "/";
+        String db = MainActivity.database + "/";
         String type = query + "/";
         String book = input.getText().toString();
         //Avoid error on whitespace
@@ -249,7 +249,7 @@ public class PageFragment extends Fragment implements OnMapReadyCallback {
                                 double lat = temp.getDouble("geolat");
                                 double lng = temp.getDouble("geolng");
                                 latlong = new LatLng(lat, lng);
-                                map.addMarker(new MarkerOptions().position(latlong));
+                                map.addMarker(new MarkerOptions().position(latlong).title("test"));
                             }
 
                         } catch (Exception e) {
@@ -270,7 +270,7 @@ public class PageFragment extends Fragment implements OnMapReadyCallback {
         final ArrayList<SingleResult> tempList = new ArrayList<SingleResult>();
         final Set<String> tempSet = new HashSet<>();
 
-        String db = "mysql" + "/";
+        String db = MainActivity.database + "/";
         String type = query + "/";
         String author = input.getText().toString();
         author = author.replaceAll(" ", "%20");
@@ -325,7 +325,7 @@ public class PageFragment extends Fragment implements OnMapReadyCallback {
         final ArrayList<SingleResult> tempList = new ArrayList<SingleResult>();
         final Set<String> tempSet = new HashSet<>();
 
-        String db = "mysql" + "/";
+        String db = MainActivity.database+ "/";
         String type = query + "/";
         String city = input.getText().toString();
         String url = server + db + type + city;

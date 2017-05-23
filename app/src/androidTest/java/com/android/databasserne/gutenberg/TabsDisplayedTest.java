@@ -49,7 +49,8 @@ public class TabsDisplayedTest extends InstrumentationTestCase {
         onView(withId(R.id.viewpager)).perform(swipeLeft());
         onView(withId(R.id.fragment2)).check(matches(withText("book")));
 
-        onView(withId(R.id.viewpager)).perform(swipeLeft());
+        //Click instead, since we would otherwise just swipe on the map, resulting in error.
+        onView(withText("Author")).perform(click());
         onView(withId(R.id.fragment3)).check(matches(withText("author")));
 
         onView(withId(R.id.viewpager)).perform(swipeLeft());
