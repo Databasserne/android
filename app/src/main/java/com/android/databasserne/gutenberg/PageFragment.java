@@ -6,16 +6,29 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.android.databasserne.gutenberg.Adapters.MultilineArrayAdapter;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by kasper on 5/10/17.
@@ -32,8 +45,10 @@ public class PageFragment extends Fragment implements OnMapReadyCallback {
     private ListView resultsListView;
     private Button searchBtn;
     private MultilineArrayAdapter adapter;
-    private ArrayList<SingleResult> dummyList;
     boolean authorLastClicked = true;
+    private TextView test;
+    private EditText input;
+    private String server = "http://bdea7eae.ngrok.io/web/api/";
 
     public static PageFragment newInstance(int page) {
         Bundle args = new Bundle();
@@ -81,9 +96,11 @@ public class PageFragment extends Fragment implements OnMapReadyCallback {
         searchBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                insertListResults(resultsListView);
+                getCityQueryData(resultsListView, "city");
             }
         });
+        test = (TextView) view.findViewById(R.id.fragment);
+        input = (EditText) view.findViewById(R.id.cityInsert);
     }
 
     private void setupBookView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -95,9 +112,11 @@ public class PageFragment extends Fragment implements OnMapReadyCallback {
         searchBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                insertMapResults();
+                getMapQueryData("book");
             }
         });
+        test = (TextView) view.findViewById(R.id.fragment2);
+        input = (EditText) view.findViewById(R.id.bookInsert);
     }
 
     private void setupAuthorView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -134,10 +153,11 @@ public class PageFragment extends Fragment implements OnMapReadyCallback {
         searchBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                insertListResults(resultsListView);
-                insertMapResults();
+                getAuthorQueryData(resultsListView, "author");
             }
         });
+        test = (TextView) view.findViewById(R.id.fragment3);
+        input = (EditText) view.findViewById(R.id.authorInsert);
 
     }
 
@@ -148,9 +168,11 @@ public class PageFragment extends Fragment implements OnMapReadyCallback {
         searchBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                insertListResults(resultsListView);
+                getLocationQueryData(resultsListView, "location");
             }
         });
+        test = (TextView) view.findViewById(R.id.fragment4);
+        input = (EditText) view.findViewById(R.id.locationInsert);
     }
 
     @Override
@@ -159,111 +181,190 @@ public class PageFragment extends Fragment implements OnMapReadyCallback {
         mapView.onResume();
     }
 
-    private void insertListResults(ListView view) {
-        dummyList = getListTestData();
-        adapter = new MultilineArrayAdapter(this.getContext(), dummyList);
-        view.setAdapter(adapter);
+    private void getCityQueryData(final ListView view, String query) {
+        final ArrayList<SingleResult> tempList = new ArrayList<SingleResult>();
+        String db = "mysql" + "/";
+        String type = query + "/";
+        String city = input.getText().toString();
+        String url = server + db + type + city;
+
+        RequestQueue queue = Volley.newRequestQueue(this.getContext());
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            JSONArray arr = new JSONArray(response);
+                            for (int i = 0; i < arr.length(); i++) {
+                                JSONObject temp = arr.getJSONObject(i);
+                                JSONObject authorArr = temp.getJSONObject("author");
+                                String authorName = authorArr.getString("name");
+
+                                //Add to list
+                                SingleResult sr = new SingleResult();
+                                sr.setFirst(authorName);
+                                sr.setSecond(temp.getString("name"));
+                                tempList.add(sr);
+                            }
+                            adapter = new MultilineArrayAdapter(getContext(), tempList);
+                            view.setAdapter(adapter);
+
+                        } catch (Exception e) {
+                            test.setText("Shit hit the fan: " + e.getMessage());
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                test.setText(getString(R.string.http_error) + server);
+            }
+        });
+        queue.add(stringRequest);
     }
 
-    private void insertMapResults() {
-        dummyList = getMapTestData();
+    private void getMapQueryData(String query) {
+        final ArrayList<SingleResult> tempList = new ArrayList<SingleResult>();
+
+        String db = "mysql" + "/";
+        String type = query + "/";
+        String book = input.getText().toString();
+        //Avoid error on whitespace
+        book = book.replaceAll(" ", "%20");
+        String url = server + db + type + book;
+
+        RequestQueue queue = Volley.newRequestQueue(this.getContext());
+
+        //Make sure map is clear
         map.clear();
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        LatLng latlong;
+                        try {
+                            JSONArray arr = new JSONArray(response);
+                            for (int i = 0; i < arr.length(); i++) {
+                                JSONObject temp = arr.getJSONObject(i);
+                                double lat = temp.getDouble("geolat");
+                                double lng = temp.getDouble("geolng");
+                                latlong = new LatLng(lat, lng);
+                                map.addMarker(new MarkerOptions().position(latlong));
+                            }
 
-        LatLng latlong;
-
-        for (SingleResult marker : dummyList) {
-            latlong = new LatLng(Double.parseDouble(marker.getFirst()), Double.parseDouble(marker.getSecond()));
-
-            map.addMarker(new MarkerOptions().position(latlong));
-        }
+                        } catch (Exception e) {
+                            test.setText("Shit hit the fan: " + e.getMessage());
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                test.setText(getString(R.string.http_error) + server + " --- ");
+                error.printStackTrace();
+            }
+        });
+        queue.add(stringRequest);
     }
 
-    // TODO - Change to use JSON data from rest api
-    private ArrayList<SingleResult> getListTestData() {
-        ArrayList<SingleResult> tempList = new ArrayList<SingleResult>();
+    private void getAuthorQueryData(final ListView view, String query) {
+        final ArrayList<SingleResult> tempList = new ArrayList<SingleResult>();
+        final Set<String> tempSet = new HashSet<>();
 
-        SingleResult sr = new SingleResult();
-        sr.setFirst("Shakespeare");
-        sr.setSecond("Hamlet");
-        tempList.add(sr);
+        String db = "mysql" + "/";
+        String type = query + "/";
+        String author = input.getText().toString();
+        author = author.replaceAll(" ", "%20");
+        String url = server + db + type + author;
 
-        sr = new SingleResult();
-        sr.setFirst("Shakespeare");
-        sr.setSecond("Romeo & Juliet");
-        tempList.add(sr);
+        RequestQueue queue = Volley.newRequestQueue(this.getContext());
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        LatLng latlong;
+                        try {
+                            JSONArray arr = new JSONArray(response);
+                            for (int i = 0; i < arr.length(); i++) {
+                                JSONObject temp = arr.getJSONObject(i);
+                                JSONArray citiesArr = temp.getJSONArray("cities");
+                                JSONObject tempCity = citiesArr.getJSONObject(0);
+                                double lat = tempCity.getDouble("geolat");
+                                double lng = tempCity.getDouble("geolng");
+                                latlong = new LatLng(lat, lng);
 
-        sr = new SingleResult();
-        sr.setFirst("Mio");
-        sr.setSecond("Kasper for president");
-        tempList.add(sr);
+                                map.addMarker(new MarkerOptions().position(latlong));
+                                //To avoid duplicate books
+                                tempSet.add(temp.getString("name"));
+                            }
 
-        sr = new SingleResult();
-        sr.setFirst("Mio");
-        sr.setSecond("#Believe");
-        tempList.add(sr);
+                            //Add each book from set to list to be shown.
+                            for (String single : tempSet) {
+                                SingleResult sr = new SingleResult();
+                                sr.setFirst(single);
+                                sr.setSecond(null);
+                                tempList.add(sr);
+                            }
 
-        sr = new SingleResult();
-        sr.setFirst("Mio");
-        sr.setSecond("#YOLO");
-        tempList.add(sr);
+                            adapter = new MultilineArrayAdapter(getContext(), tempList);
+                            view.setAdapter(adapter);
 
-        sr = new SingleResult();
-        sr.setFirst("Mio");
-        sr.setSecond("#Hashtag");
-        tempList.add(sr);
-
-        sr = new SingleResult();
-        sr.setFirst("Mio");
-        sr.setSecond("#TooManyBooks");
-        tempList.add(sr);
-
-        sr = new SingleResult();
-        sr.setFirst("Mio");
-        sr.setSecond("How to fill data");
-        tempList.add(sr);
-
-        sr = new SingleResult();
-        sr.setFirst("Mio");
-        sr.setSecond("This title needs to be long so i can test it - therefor blaalbblaalbblaalb");
-        tempList.add(sr);
-
-        sr = new SingleResult();
-        sr.setFirst("Mio");
-        sr.setSecond("I am running out of ideas :S");
-        tempList.add(sr);
-
-        sr = new SingleResult();
-        sr.setFirst("Mio");
-        sr.setSecond("Gotta find em all!");
-        tempList.add(sr);
-
-        sr = new SingleResult();
-        sr.setFirst("Mio");
-        sr.setSecond("Android development 101");
-        tempList.add(sr);
-
-        return tempList;
+                        } catch (Exception e) {
+                            test.setText("Shit hit the fan: " + e.getMessage());
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                test.setText(getString(R.string.http_error) + server);
+            }
+        });
+        queue.add(stringRequest);
     }
 
-    private ArrayList<SingleResult> getMapTestData() {
-        ArrayList<SingleResult> tempList = new ArrayList<SingleResult>();
+    private void getLocationQueryData(final ListView view, String query) {
+        final ArrayList<SingleResult> tempList = new ArrayList<SingleResult>();
+        final Set<String> tempSet = new HashSet<>();
 
-        SingleResult sr = new SingleResult();
-        sr.setFirst("51.509865");
-        sr.setSecond("-0.118092");
-        tempList.add(sr);
+        String db = "mysql" + "/";
+        String type = query + "/";
+        String city = input.getText().toString();
+        String url = server + db + type + city;
 
-        sr = new SingleResult();
-        sr.setFirst("55.676098");
-        sr.setSecond("12.568337");
-        tempList.add(sr);
+        RequestQueue queue = Volley.newRequestQueue(this.getContext());
 
-        sr = new SingleResult();
-        sr.setFirst("59.334591");
-        sr.setSecond("18.063240");
-        tempList.add(sr);
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            JSONArray arr = new JSONArray(response);
+                            for (int i = 0; i < arr.length(); i++) {
+                                JSONObject temp = arr.getJSONObject(i);
 
-        return tempList;
+                                tempSet.add(temp.getString("name"));
+                            }
+
+                            //Add each book from set to list to be shown.
+                            for (String single : tempSet) {
+                                SingleResult sr = new SingleResult();
+                                sr.setFirst(single);
+                                sr.setSecond(null);
+                                tempList.add(sr);
+                            }
+
+                            adapter = new MultilineArrayAdapter(getContext(), tempList);
+                            view.setAdapter(adapter);
+
+                        } catch (Exception e) {
+                            test.setText("Shit hit the fan: " + e.getMessage());
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                test.setText(getString(R.string.http_error) + server);
+            }
+        });
+        queue.add(stringRequest);
     }
-
 }
