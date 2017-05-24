@@ -2,6 +2,7 @@ package com.android.databasserne.gutenberg;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.android.databasserne.gutenberg.Adapters.MultilineArrayAdapter;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -37,7 +39,7 @@ import java.util.Set;
 public class PageFragment extends Fragment implements OnMapReadyCallback {
 
     public static final String ARG_PAGE = "ARG_PAGE";
-    public static String server = "http://bdea7eae.ngrok.io/web/api/";
+    public static String server = "http://befaf975.ngrok.io/web/api/";
 
     private int mPage;
     private View view;
@@ -218,8 +220,10 @@ public class PageFragment extends Fragment implements OnMapReadyCallback {
             @Override
             public void onErrorResponse(VolleyError error) {
                 test.setText(getString(R.string.http_error) + server);
+                error.printStackTrace();
             }
         });
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(60000,DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         queue.add(stringRequest);
     }
 
@@ -263,6 +267,7 @@ public class PageFragment extends Fragment implements OnMapReadyCallback {
                 error.printStackTrace();
             }
         });
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(60000,DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         queue.add(stringRequest);
     }
 
@@ -318,6 +323,7 @@ public class PageFragment extends Fragment implements OnMapReadyCallback {
                 test.setText(getString(R.string.http_error) + server);
             }
         });
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(60000,DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         queue.add(stringRequest);
     }
 
@@ -365,6 +371,7 @@ public class PageFragment extends Fragment implements OnMapReadyCallback {
                 test.setText(getString(R.string.http_error) + server);
             }
         });
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(60000,DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         queue.add(stringRequest);
     }
 }
